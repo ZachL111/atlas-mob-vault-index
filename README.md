@@ -1,41 +1,29 @@
 # atlas-mob-vault-index
 
-`atlas-mob-vault-index` is a Go project for Mobile workflows. It turns create a Go reference implementation for vault workflows, centered on storage recovery, log and snapshot fixtures, and replay consistency checks into a small local model with readable fixtures and a direct verification command.
+`atlas-mob-vault-index` explores mobile workflows with a small Go codebase and local fixtures. The technical goal is to create a Go reference implementation for vault workflows, centered on storage recovery, log and snapshot fixtures, and replay consistency checks.
 
-## Reading Atlas Mob Vault Index
+## Why It Exists
 
-Start with the README, then open `metadata/project.json` to check the constants behind the examples. After that, `fixtures/cases.csv` shows the compact path and `examples/extended_cases.csv` gives a wider look at the same rule.
+The point is to make a small domain rule concrete enough that a reader can change it and immediately see what broke.
 
-## Purpose
+## Atlas Mob Vault Index Review Notes
 
-The goal is to capture the core behavior in code and make the surrounding assumptions obvious. A reader should be able to run the verifier, open the fixtures, and understand why each decision was made.
+For a quick review, compare `form pressure` with `form pressure` before reading the middle cases.
 
-## What It Does
+## Features
 
-- Models local state with deterministic scoring and explicit review decisions.
-- Uses fixture data to keep sync pressure changes visible in code review.
-- Includes extended examples for form constraints, including `surge` and `degraded`.
-- Documents offline paths tradeoffs in `docs/operations.md`.
-- Runs locally with a single verification command and no external credentials.
+- `fixtures/domain_review.csv` adds cases for form pressure and sync drift.
+- `metadata/domain-review.json` records the same cases in structured form.
+- `config/review-profile.json` captures the read order and the two review questions.
+- `examples/atlas-mob-vault-walkthrough.md` walks through the case spread.
+- The Go code includes a review path for `form pressure` and `form pressure`.
+- `docs/field-notes.md` explains the strongest and weakest cases.
 
-## Design Sketch
+## Architecture Notes
 
-The project is organized around a compact model rather than a large framework. Inputs are scored, classified, and checked against golden fixtures. The constants live in code and are mirrored in metadata so documentation drift is easy to catch. The Go layout uses small packages and table-oriented tests so the behavior stays easy to follow.
+The repository has two validation layers: the original compact policy fixture and the domain review fixture. They are separate so one can change without hiding failures in the other.
 
-## Files Worth Reading
-
-- `policy`: Go package with the core model
-- `cmd`: small command entry point
-- `fixtures`: compact golden scenarios
-- `examples`: expanded scenario set
-- `metadata`: project constants and verification metadata
-- `docs`: operations and extension notes
-- `scripts`: local verification and audit commands
-- `go.mod`: Go module metadata
-
-## Setup
-
-Use a normal shell with Go available on `PATH`. The verifier is written as a PowerShell script because the portfolio was assembled on Windows.
+The Go implementation avoids hidden state so fixture changes are easy to reason about.
 
 ## Usage
 
@@ -43,27 +31,10 @@ Use a normal shell with Go available on `PATH`. The verifier is written as a Pow
 powershell -NoProfile -ExecutionPolicy Bypass -File scripts/verify.ps1
 ```
 
-This runs the language-level build or test path against the compact fixture set.
+## Tests
 
-## Verification
+That command is also the regression path. It verifies the domain cases and catches mismatches between the CSV, metadata, and code.
 
-```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File scripts/audit.ps1
-```
+## Limitations And Roadmap
 
-The audit command checks repository structure and README constraints before it delegates to the verifier.
-
-## Fixture Notes
-
-The extended cases are not random smoke tests. `degraded` keeps pressure on the review path, while `surge` shows the model when capacity and weight are strong enough to clear the threshold.
-
-## Limits
-
-The examples cover useful edges, not every edge. A larger version would add malformed-input tests, richer reports, and deeper domain parsers.
-
-## Next Directions
-
-- Add a short report command that prints the score breakdown for a single scenario.
-- Add malformed input fixtures so the failure path is as visible as the happy path.
-- Split the scoring constants into a typed configuration object and validate it before use.
-- Add one more mobile workflows fixture that focuses on a malformed or borderline input.
+The fixture set is small enough to audit by hand. The next useful expansion is malformed input coverage, not extra surface area.
